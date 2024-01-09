@@ -3,29 +3,33 @@
 #include <iostream>
 
 int main() {
-    // Create an Enigma machine with a key
-    Enigma enigma("QWERTYUIOPASDFGHJKLZXCVBNM");
+    try {
+        // Créer une machine Enigma avec deux clés de rotor
+        Enigma enigma("QWERTYUIOPASDFGHJKLZXCVBNM", "MNBVCXZLKJHGFDSAPOIUYTREWQ");
 
-    // Read a message from a file
-    enigma.read("input.txt");
+        // Lire un message à partir d'un fichier
+        enigma.read("input.txt");
 
-    // Display the original message
-    std::cout << "Original Message: " << enigma.plain() << std::endl;
+        // Afficher le message d'origine
+        std::cout << "Message d'origine : " << enigma.plain() << std::endl;
 
-    // Encode the message
-    enigma.encode();
+        // Encoder le message
+        enigma.encode();
 
-    // Display the encoded message
-    std::cout << "Encoded Message: " << enigma.cipher() << std::endl;
+        // Afficher le message encodé
+        std::cout << "Message encodé : " << enigma.cipher() << std::endl;
 
-    // Decode the message
-    enigma.decode();
+        // Décoder le message
+        enigma.decode();
 
-    // Display the decoded message
-    std::cout << "Decoded Message: " << enigma.plain() << std::endl;
+        // Afficher le message décodé
+        std::cout << "Message décodé : " << enigma.plain() << std::endl;
 
-    // Write the decoded message to a file
-    enigma.write("output.txt");
+        // Écrire le message décodé dans un fichier
+        enigma.write("output.txt");
+    } catch (const std::exception& e) {
+        std::cerr << "Erreur : " << e.what() << std::endl;
+    }
 
     return 0;
 }

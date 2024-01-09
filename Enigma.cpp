@@ -2,33 +2,38 @@
 #include "Enigma.h"
 #include <stdexcept>
 
-Enigma::Enigma(const std::string& key) {
-    setKey(key);
+Enigma::Enigma(const std::string& keyRotor1, const std::string& keyRotor2) {
+    setKeys(keyRotor1, keyRotor2);
 }
 
 Enigma::~Enigma() {}
 
-void Enigma::setKey(const std::string& key) {
-    if (key.length() == 26) {
-        _key = key;
+void Enigma::setKeys(const std::string& keyRotor1, const std::string& keyRotor2) {
+    // Vérifier que les clés ont une longueur de 26 caractères
+    if (keyRotor1.length() == 26 && keyRotor2.length() == 26) {
+        _keyRotor1 = keyRotor1;
+        _keyRotor2 = keyRotor2;
     } else {
-        throw std::invalid_argument("Key must be of length 26.");
+        throw std::invalid_argument("Les clés doivent avoir une longueur de 26 caractères.");
     }
 }
 
 void Enigma::encode() {
     for (char& c : _plain) {
         if (isalpha(c)) {
-            // Convert character to uppercase for indexing the key
+            // Convertir le caractère en majuscule pour l'indexation des clés
             c = toupper(c);
 
-            // Check if the character is a valid uppercase letter
+            // Vérifier si le caractère est une lettre majuscule valide
             if (c < 'A' || c > 'Z') {
-                throw std::invalid_argument("Invalid character in the message.");
+                throw std::invalid_argument("Caractère non valide dans le message.");
             }
 
-            // Shift the character using the key
-            c = _key[c - 'A'];
+            // Effectuer le décalage du caractère en utilisant le premier rotor
+            c = _keyRotor1[c - 'A'];
+
+            // Effectuer le décalage du caractère en utilisant le deuxième rotor
+            c = _keyRotor2[c - 'A'];
         }
     }
 
@@ -38,19 +43,25 @@ void Enigma::encode() {
 void Enigma::decode() {
     for (char& c : _cipher) {
         if (isalpha(c)) {
-            // Convert character to uppercase for indexing the key
+            // Convertir le caractère en majuscule pour l'indexation des clés
             c = toupper(c);
 
-            // Check if the character is a valid uppercase letter
+            // Vérifier si le caractère est une lettre majuscule valide
             if (c < 'A' || c > 'Z') {
-                throw std::invalid_argument("Invalid character in the message.");
+                throw std::invalid_argument("Caractère non valide dans le message.");
             }
 
-            // Find the original position of the character in the key
-            size_t pos = _key.find(c);
+            // Trouver la position d'origine du caractère dans le deuxième rotor
+            size_t posRotor2 = _keyRotor2.find(c);
 
-            // Shift the character back to its original position
-            c = static_cast<char>('A' + pos);
+            // Effectuer le décalage inverse du caractère en utilisant le deuxième rotor
+            c = static_cast<char>('A' + posRotor2);
+
+            // Trouver la position d'origine du caractère dans le premier rotor
+            size_t posRotor1 = _keyRotor1.find(c);
+
+            // Effectuer le décalage inverse du caractère en utilisant le premier rotor
+            c = static_cast<char>('A' + posRotor1);
         }
     }
 
